@@ -84,3 +84,38 @@ The script automatically handles schema differences between V3 and V2 DEXes:
 ### Available Subgraphs
 
 Run `python thegraph_dex_downloader.py --list-subgraphs` to see all available subgraph configurations.
+
+## Schema Utility
+
+The `utils.py` module provides tools for inspecting subgraph schemas via GraphQL introspection. This is useful for exploring what data is available in a subgraph before writing queries.
+
+### Usage
+
+```bash
+# Print a human-readable schema summary
+python utils.py 5zvR82QoaXYFyDEKLZ9t6v9adgnptxYpKpSbxtgVENFV
+
+# Fetch schema using a full URL
+python utils.py https://gateway.thegraph.com/api/subgraphs/id/HMuAwufqZ1YCRmzL2SfHTVkzZovC9VL2UAKhjvRqKiR1
+
+# Save the full schema to a JSON file
+python utils.py 5zvR82QoaXYFyDEKLZ9t6v9adgnptxYpKpSbxtgVENFV --output schema.json
+
+# Print the full JSON schema to stdout
+python utils.py 5zvR82QoaXYFyDEKLZ9t6v9adgnptxYpKpSbxtgVENFV --json
+
+# Pass API key directly
+python utils.py 5zvR82QoaXYFyDEKLZ9t6v9adgnptxYpKpSbxtgVENFV --api-key YOUR_KEY
+```
+
+### Programmatic Usage
+
+```python
+from utils import get_subgraph_schema, extract_subgraph_id
+
+# Fetch schema for a subgraph
+schema = get_subgraph_schema("5zvR82QoaXYFyDEKLZ9t6v9adgnptxYpKpSbxtgVENFV")
+
+# Extract ID from a URL
+subgraph_id = extract_subgraph_id("https://gateway.thegraph.com/api/.../subgraphs/id/HMuAwuf...")
+```

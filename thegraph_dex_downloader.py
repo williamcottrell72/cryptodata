@@ -50,18 +50,13 @@ import json
 import os
 import time
 from datetime import datetime
-from pathlib import Path
 from typing import Any, Optional
 
 import requests
 
 from queries import (
     SubgraphConfig,
-    GRAPH_BASE_URL,
     SUBGRAPH_CONFIGS,
-    QUERIES_V3,
-    QUERIES_V2,
-    QUERIES,
     get_queries_for_dex_type,
     is_v2_dex,
 )

@@ -119,3 +119,78 @@ schema = get_subgraph_schema("5zvR82QoaXYFyDEKLZ9t6v9adgnptxYpKpSbxtgVENFV")
 # Extract ID from a URL
 subgraph_id = extract_subgraph_id("https://gateway.thegraph.com/api/.../subgraphs/id/HMuAwuf...")
 ```
+
+## AAVE Liquidations Downloader
+
+A command-line tool for downloading AAVE protocol liquidation data from The Graph.
+
+### Supported Data Types
+
+| Query Type | Description |
+|------------|-------------|
+| `liquidations` | Liquidation events (collateral seized, debt repaid) |
+| `reserves` | Reserve/market identifiers |
+
+### Available Subgraphs
+
+| Name | Version | Network | Subgraph ID |
+|------|---------|---------|-------------|
+| AAVE V3 Ethereum | v3 | Ethereum | `9JLB7VbhJaGRtiFVvA6b4vDDwsfWF5rbY8Gd3zAUW1T7` |
+
+### Usage
+
+```bash
+# Download recent liquidations (default: AAVE V3 Ethereum)
+python aave_liquidations.py --query-type liquidations --limit 100
+
+# Download liquidations for a specific user
+python aave_liquidations.py --query-type liquidations --user 0x1234...
+
+# Download reserve data
+python aave_liquidations.py --query-type reserves
+
+# Time-filtered liquidations
+python aave_liquidations.py --query-type liquidations --start-time 2024-01-01 --end-time 2024-02-01
+
+# Specify custom output directory (useful for testing)
+python aave_liquidations.py --query-type liquidations --output-dir /tmp/aave_test
+
+# List available subgraphs
+python aave_liquidations.py --list-subgraphs
+```
+
+### Output Structure
+
+Data is saved to: `data/aave/<subgraph>/<query_type>/data.json`
+
+Example: `data/aave/aave_v3_ethereum/liquidations/data.json`
+
+### Liquidation Data Fields
+
+Each liquidation record includes:
+
+```json
+{
+  "id": "0x...-logIndex",
+  "timestamp": 1704067200,
+  "datetime": "2024-01-01T00:00:00",
+  "user": "0x...",
+  "reserve_id": "0x...",
+  "reserve_underlying_asset": "0x...",
+  "collateral_asset": "0x...",
+  "debt_asset": "0x...",
+  "debt_to_cover": 1000000000000000000,
+  "liquidated_collateral_amount": 500000000000000000,
+  "profit": 25000000000000000
+}
+```
+
+Note: Amount values are raw BigInt values. Divide by 10^decimals (typically 18 for ETH, 6 for USDC) to get human-readable amounts.
+
+### Understanding AAVE Liquidations
+
+When a borrower's health factor drops below 1, their position becomes eligible for liquidation:
+
+- **Health Factor** = (Collateral × Liquidation Threshold) / Debt
+- Liquidators repay part of the debt and receive collateral + bonus
+- The liquidation bonus (typically 5-15%) incentivizes liquidators
